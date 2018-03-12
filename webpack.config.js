@@ -4,7 +4,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 const OpenBrowserPlugin = require('open-browser-webpack-plugin')
 const merge = require('webpack-merge')
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
-
+const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 
 
 function parseNpmLifecycleEvent(event) {
@@ -57,7 +57,8 @@ const common = {
     extensions: ['.js', '.jsx', '.sass'],
     alias: {
       "components": path.resolve(__dirname, `pages/${npmEvent.target}/components`),
-      "utils": path.resolve(__dirname, `pages/${npmEvent.target}/utils`)
+      "utils": path.resolve(__dirname, `pages/${npmEvent.target}/utils`),
+      "publicComponents":  path.resolve(__dirname,`pages/demo/components`)
     }
   },
   plugins: [
@@ -132,7 +133,8 @@ if (npmEvent.op === 'build') {
       }),
       new webpack.DefinePlugin({
         'process.env.NODE_ENV': '"production"'
-      })
+      }),
+      new UglifyJSPlugin()
     ]
   })
 }

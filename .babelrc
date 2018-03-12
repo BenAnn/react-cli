@@ -7,6 +7,6 @@
       "regenerator": true,
       "moduleName": "babel-runtime"
     }
-   ]],
+   ],"syntax-dynamic-import"],
   "comments": false
 }

@@ -1,9 +1,10 @@
-require('./App.scss')
+// require('./App.scss')
 import React, { Component } from 'react'
 import { HashRouter as Router, Route, Switch } from 'react-router-dom'
 import asyncComponent from './utils/asyncComponent';
 import HomePage from 'components/HomePage'
-const FirstPage = asyncComponent(() => import("./components/FirstPage"));
+const FirstPage = asyncComponent(() => import(/* webpackChunkName: "FirstPage" */ "./components/FirstPage"));
+const Test = asyncComponent(() => import(/* webpackChunkName: "Test" */ "./components/Test"));
 
 export default class App extends Component {
     render() {
@@ -14,6 +15,7 @@ export default class App extends Component {
 
                     </Route>
                     <Route path="/first" component={FirstPage} />
+                    <Route path="/test" component={Test} />
                 </Switch>
             </Router>
         )
