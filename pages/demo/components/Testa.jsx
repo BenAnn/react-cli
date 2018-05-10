@@ -1,7 +1,7 @@
-
+require('./FirstPage.scss')
 import React from 'react';
 
-const FirstPage = () => {
+const Testa = () => {
     return (
         <div>
             <div className="namee">sadfasdasdf</div>
@@ -16,4 +16,4 @@ const FirstPage = () => {
     )
 }
 
-export default FirstPage
+export default Testa

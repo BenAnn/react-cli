@@ -16,7 +16,7 @@ export default class HomePage extends Component {
     render() {
         return (
             <div>
-                hello,word
+                <span className="abc">hello,word</span>
                 <Child name={this.state.name} />
                 <div onClick={this.handleClick.bind(this)}>
                     点击
