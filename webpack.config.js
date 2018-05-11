@@ -3,8 +3,8 @@ const webpack = require('webpack')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const OpenBrowserPlugin = require('open-browser-webpack-plugin')
 const merge = require('webpack-merge')
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
-const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
+const MiniCssExtractPlugin = require("mini-css-extract-plugin")
+const UglifyJSPlugin = require('uglifyjs-webpack-plugin')
 
 
 function parseNpmLifecycleEvent(event) {
@@ -44,7 +44,6 @@ const PATH = {
 const common = {
     entry: {
         app: PATH.src,
-        vendor: ['react', 'react-dom', 'react-router-dom']
     },
     output: {
         path: PATH.dist,
@@ -61,36 +60,27 @@ const common = {
         }
     },
     plugins: [
-        new ExtractTextPlugin('styles.css'),
+        new MiniCssExtractPlugin({
+            filename: "[name].css",
+            chunkFilename: "[id].css"
+        }),
         new HtmlWebpackPlugin({
             template: path.join(PATH.src, 'assets/tpl.html'),
             filename: `${npmEvent.target}.html`,
-            hash: true
+            hash: true,
+            // chunks: ['app', 'commons', 'styles']
         }),
     ],
-    optimization: {
-        splitChunks: {
-            cacheGroups: {
-                vendor: {
-                    name: 'vendor',
-                    priority: 10,
-                    chunks: 'initial'
-                }
-            }
-        }
-    },
     module: {
         rules: [{
                 test: /\.scss/,
-                use: ExtractTextPlugin.extract({
-                    use: [{
-                        loader: 'css-loader',
-                        options: {
-                            minimize: true, //css压缩
-                            importLoaders: 1
-                        }
-                    }, { loader: "sass-loader" }]
-                })
+                use: [MiniCssExtractPlugin.loader, {
+                    loader: 'css-loader',
+                    options: {
+                        minimize: true, //css压缩
+                        importLoaders: 1
+                    }
+                }, { loader: "sass-loader" }]
             },
             {
                 test: /\.(eot|woff|woff2|ttf|svg|png|jpe?g|gif|mp4|webm)(\?\S*)?$/,
@@ -128,6 +118,24 @@ if (npmEvent.op === 'start') {
 }
 if (npmEvent.op === 'build') {
     module.exports = merge(common, {
+        optimization: {
+            splitChunks: {
+                cacheGroups: {
+                    commons: {
+                        name: 'commons',
+                        priority: 10,
+                        chunks: 'initial'
+                    },
+                    styles: {
+                        name: 'styles',
+                        test: /\.css$/,
+                        chunks: 'all',
+                        minChunks: 2,
+                        enforce: true
+                    }
+                }
+            }
+        },
         plugins: [
             new webpack.DefinePlugin({
                 'process.env.NODE_ENV': '"production"'
