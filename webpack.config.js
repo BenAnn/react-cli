@@ -5,6 +5,7 @@ const OpenBrowserPlugin = require('open-browser-webpack-plugin')
 const merge = require('webpack-merge')
 const MiniCssExtractPlugin = require("mini-css-extract-plugin")
 const UglifyJSPlugin = require('uglifyjs-webpack-plugin')
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
 
 
 function parseNpmLifecycleEvent(event) {
@@ -54,9 +55,9 @@ const common = {
     resolve: {
         extensions: ['.js', '.jsx', '.sass'],
         alias: {
-            "components": path.resolve(__dirname, `pages/${npmEvent.target}/components`),
-            "utils": path.resolve(__dirname, `pages/${npmEvent.target}/utils`),
-            "publicComponents": path.resolve(__dirname, `pages/demo/components`)
+            "@components": path.resolve(__dirname, `pages/${npmEvent.target}/components`),
+            "@utils": path.resolve(__dirname, `pages/${npmEvent.target}/utils`),
+            "@publicComponents": path.resolve(__dirname, `pages/demo/components`)
         }
     },
     plugins: [
@@ -68,7 +69,7 @@ const common = {
             template: path.join(PATH.src, 'assets/tpl.html'),
             filename: `${npmEvent.target}.html`,
             hash: true,
-            // chunks: ['app', 'commons', 'styles']
+            chunks: ['app', 'commons']
         }),
     ],
     module: {
@@ -120,26 +121,33 @@ if (npmEvent.op === 'build') {
     module.exports = merge(common, {
         optimization: {
             splitChunks: {
+                chunks: 'all',
+                minSize: 30000,
+                minChunks: 1,
+                maxAsyncRequests: 5,
+                maxInitialRequests: 3,
+                automaticNameDelimiter: '-',
+                name: true,
                 cacheGroups: {
                     commons: {
+                        test: /[\\/]node_modules[\\/]/,
                         name: 'commons',
-                        priority: 10,
-                        chunks: 'initial'
+                        priority: -10,
+                        chunks: 'all'
                     },
-                    styles: {
-                        name: 'styles',
-                        test: /\.css$/,
-                        chunks: 'all',
+                    default: {
                         minChunks: 2,
-                        enforce: true
+                        priority: -20,
+                        reuseExistingChunk: true
                     }
-                }
+                },
             }
         },
         plugins: [
             new webpack.DefinePlugin({
                 'process.env.NODE_ENV': '"production"'
             }),
+            new BundleAnalyzerPlugin()
         ]
     })
 }

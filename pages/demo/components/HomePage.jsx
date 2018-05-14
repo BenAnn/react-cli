@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import Child from './Child';
+import Img from '../assets/default-header.jpg'
+import { DatePicker } from 'antd';
 
 export default class HomePage extends Component {
     constructor(props) {
@@ -21,6 +23,7 @@ export default class HomePage extends Component {
                 <div onClick={this.handleClick.bind(this)}>
                     点击
                 </div>
+                <img src={Img} alt=""/>
             </div>
         );
     }

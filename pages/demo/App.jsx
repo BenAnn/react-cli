@@ -2,7 +2,7 @@ require('./App.scss')
 import React, { Component } from 'react'
 import { HashRouter as Router, Route, Switch } from 'react-router-dom'
 import asyncComponent from './utils/asyncComponent';
-import HomePage from 'components/HomePage'
+import HomePage from '@components/HomePage'
 import Testa from './components/Testa'
 const FirstPage = asyncComponent(() => import(/* webpackChunkName: "FirstPage" */ "./components/FirstPage"));
 const Test = asyncComponent(() => import(/* webpackChunkName: "Test" */ "./components/Test"));
